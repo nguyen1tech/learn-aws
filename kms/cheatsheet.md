@@ -1,0 +1,18 @@
+- **KMS** creates and manages encryption keys for a variety of AWS services or for your apps.
+- KMS can be used with **CloudTrail** to audit keys access history.
+- KMS has the ability to automatically rotate out your keys every year with no need to re-encrypt.
+- **Customer Master Keys(CMKs)** are the primary resources in AWS services.
+- KMS is a multi-tenant **HSM**, multi tenant means you're sharing the hardware with multiple customers.
+- Hardware Security Module(HSM) is a specialized hardware for storing keys and is temper-proof.
+- KMS is up to **FIPS 140-2 level 2** compliant.
+- KMS stores master keys not data keys.
+- Master keys are used to encrypt data keys which is called **Envelop Encryption**
+- KMS supports 2 kinds of keys **Symmetric** and **Asymmetric**:
+  - **Symmetric** is a single key using 256 bit encryption eg: S3 bucket AES-256
+  - **Asymmetric** uses two keys, eg: key pair public and private
+- Important KMS APIs to remember:
+  - **aws kms create-key**: create a key
+  - **aws kms encrypt**: encrypt a key
+  - **aws kms decrypt**: decrypt a key
+  - **aws kms re-encrypt**: re-encrypt a key
+  - **aws kms enable key-rotation**: turn on automatic key rotation(only for **symmetric keys**) 
