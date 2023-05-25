@@ -1,0 +1,9 @@
+- Cognito is decentralized managed authentication system. When you need to easily add authentication to your mobile and web applications.
+- **User Pools** user directory, allows users to authenticate using OAuth to IpD such as Facebook, Google, Amazon to conntect your web applications.
+- User pools use **JWTs** for to persist authentication.
+- **Identity Pools** provides **temporary AWS credentials** to access services eg: S3, DynamoDB
+- **Cognito Sync** can sync **user data** and **preferences** across devices with one line of code(powered by SNS)
+- **Web Identity Federation** exchange identity and security information between an Identity Provider and an application
+- **Identity Provider** a trusted provider of your user identity that let your users authenticate to access other services eg: Facebook, Google
+- **OIDC** is a type of Identity Provider which uses OAuth
+- **SAML** is a type of Identity Provider which is used for Single Sign On 
