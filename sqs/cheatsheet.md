@@ -1,0 +1,15 @@
+- SQS is a queuing service using messages with a queue. Think sidekid or RabitMQ
+- SQS is used for Application Integration, it lets decoupled services and apps to talk to each other
+- To read SQS you need to **Pull** the queue. SQS is **not push-based**
+- SQS support both standard and First in First out queues
+  - Standard allows nearly unlimited messages per second, does not guarantee order of delivery, always deliver at least once, you must protect against duplicate messages being processed.
+  - FIFO maintain the order of messages within 300 limit
+- There are two types of Polling: **Short Polling(Default)** and **Long Polling***
+- Short polling returns messages immediately, even if the message queue being polled is empty
+- Long polling waits until message arrives in the queue, or the long poll timeout expires.
+- In majority of cases **Long Polling** is preferred over short polling
+- **Visibility timeout** is a period of time a message is invisible in the queue
+- Messages will be deleted after a job has processed(before visibility timeout expires)
+- The default visibility timeout is 30 seconds, Timeout can be of 0 second to a maximum of 12 hours
+- SQS can retain messages from 60 seconds to 14 days and the default is 4 days
+- Message size between 1 byte to 256kb, extended client library for Java can increase to 2GB
