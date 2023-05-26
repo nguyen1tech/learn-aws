@@ -1,0 +1,15 @@
+- **SNS(Simple Notification Service)** is a fully managed pub/sub messaging service
+- SNS is for **Application Integration**. It allows decoupled services and apps to communicate with each other.
+- **Topic** is a logical access point and communcation channel
+- You can encrypt topics via KMS
+- **Publisher** use the AWS API via AWS CLI or AWS SDK to push messages to a topic. Many AWS services integrate with SNS and act as publisher
+- **Subscription** subscribes to topics. When a topic receives a message it automatically and immediately pushes messages to subscribers
+- All messages published to SNS are stored redundantly across multiple AZ(Availibility Zone)
+- The following protocols:
+  - HTTP and HTTPs create webhooks into your web application
+  - Email good for internal email notification(onlly support plaintext)
+  - Email-JSON send you JSON via email
+  - Amazon SQS place SNS message into SQS queue
+  - AWS Lambda triggers a lambda function
+  - SMS send a text message
+  - Platform application endpoints -> Mobile Push. eg: Apple, Google, Microsoft, Baidu notification systems
