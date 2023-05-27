@@ -116,7 +116,40 @@ The primary keys determine where and how your data will be stored in paritions.
     - Times by number of writes
     - eg: 50 writes at 40kb per item --> 40 * 50 = 2000 WCUs <--> 11 writes at 1kb per item 1 * 11 = 11 WCUs <--> 18 writes at 500 bytes per item --> Round up 500 bytes to 1 kb --> 1 * 18 = 18 WCUs
 ## Global table
+Fully managed, multi-region, multi-active database. Global table replicates your Dynamodb tables automatically across your choice of AWS Regions. Dynamodb global table consists of multiple replica tables(one per AWS Region) that Dynamodb treats as a single unit. Every replica have the same table name, the same primary key schema. When an application writes data to a replica in one region, Dynamodb propagates the write to the other replica tables in the other AWS Regions automatically.
 
-    
+## Transactions
+Dynamodb offer the ability to perform transactions at no additional cost, using the `TransactionWriteItems` and `TransactionGetItem` operations
+- Transactions allow **all or nothing** changes to mulitple items both **within and cross tables**
 
-  
+## Time to live (TTL)
+Let you have items in Dynamodb expire(delete) at any given time
+
+## Streams
+If enable, DynamoDB will capture every modification to items so you can react to those changes
+- When an **Insert**, **Update**, **Delete** occurs, the change will be captured and sent to **Lambda Functions**
+  - Changes are sent in batches at a time to your Lambda
+  - Changes are sent to your custom Lambda in near real-time
+  - Each stream record appears exactly once in the stream
+  - For each item that is modified, the stream records appear in the same sequence as the actual modifications
+
+## Errors
+- **Throttling exception**: rate of requests exceeds the allowed throughput. This exception might be returned if you performed any of the following operations too rapidly: CreateTable, UpdateTable, DeleteTable
+- **ProvisionedThroughputExceededException**: You exceeded your maximum allowed provisioned throughput for a table or for one or more global secondary indexes.
+- The AWS SDK will automatically retry with Exponential Backoffs when an error occurs: It will attempt the request again 50ms, 100ms, 200ms up to a minute before stopping.
+
+## Secondary Indexes
+- There are two types of indexes:
+  - LSI - Local secondary index
+  - GSI - Global secondary index
+- **Local secondary indexes**
+  - The total size of indexed items for one partition key value **can not exceed 10GB**
+  - **Share provisioned throughput** settings for read and write activity with the table it's indexing.
+  - Limit of 5 per table
+- **Global secondary indexes**
+  - It's considered global b/c queries on the index **can span all of the data in the base table, cross all paritions**
+  - The indexes have no size restrictions (unlimited)
+  - They have their own provisioned throughput settings. They consume capacity but not from the base table
+  - Limited to 20 per table - default
+![image](https://github.com/nguyen1tech/learn-aws/assets/123853507/c6c5fce9-95af-448b-9e35-7e0c7dbf51b4)
+
