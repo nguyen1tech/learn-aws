@@ -1,0 +1,92 @@
+- Dynamodb is a fully managed **NoSQL** key/value and document database
+- Dynamodb is suited for workloads with any amount of data that **require predicatable read and write performance** and automatic scaling large to small and and every where in between
+- Can scale up and down to whatever read and write capacity you specify in second in provisioned capacity mode or On-demand mode and there is little to no capacity planning
+- Can set to support **Eventual Consistent Reads (default)** and **Strongly Consistent Reads** on a per-call basic
+- **Eventually Consistent Reads** data is returned immediately but can be inconsistent. Copies of data will be consistent generally in 1 second
+- **Strongly Consistent Reads** will always read from the leader partition since it always has an up to date copy of data. Data will never be inconsistent but latency higher. Copies of data with a gurantee of 1 second
+- Dynamodb stores 3 copies of data on SSD drives across 3 AZ in a region
+- Dynamodb most common data types are: B - Binary, S - String, N - Number
+- Tables consist of **Items(rows)**, Items consist of **Attributes(column)**
+- A partition is when Dynamodb slices the table up into smaller chunks to speed up reads for very large table
+- Dynamodb automatically creates Partitions for:
+  - Every 10GB of data
+  - When you exceed RCUs(3000) or WCUs(1000) limits for a single partition
+  - When Dynamodb sees a pattern of a hot partition, it will split that partition in an attempt to fix the issue
+- Dynamodb will try to **evenly split** RCUs and WCUs across partitions
+- Primary keys define **where and how** data will be stored in partitions
+- Primary key comes in 2 types:
+  - Simple primary keys - Using only a partition key
+  - Composite primary keys - Using both partition key and sort key
+- Partition keys are also known as **HASH**
+- Sort keys are also known as **RANGE**
+- When creating a simple primary key the partition key must be unique
+- When creating a Composite primary key the combined partition and sort key must be unique
+- When using sort key records on a partition are logically grouped together in ascending order
+- **Dynamodb Golbal Tables** provides a fully managed, multi-region, multi-master database
+- Dynamodb supports transactions via `TransactWriteItems` and `TransactGetItems`
+- Transactions let you query mulitple tables at once and is an all or nothing approach
+- **Dynamodb Streams** allow to setup a Lambda function triggered every time data is modified in a table to react to changes - Streams do not consume RCUs
+- Dynamodb has 2 types of indexes:
+  - LSI: Local Secondary Index
+    - Support strongly or eventual consistency reads
+    - Can only be created with initial table - can not be modified / deleted unless deleting the table
+    - Only Composite
+    - 10GB or less per parition
+    - Share capacity unit with the base table
+    - Must share partition key(PK) with the base table
+  - GSI: Global Secondary Index - can not provide strong consistency
+    - Only eventual consistency reads
+    - Create/modify/delete at any time
+    - Simple and Composite
+    - Can have whatever attributes as Partition key or Sort Key
+    - No size restriction per partition
+    - Has its own capacity settings
+ - Scan:
+   - Your table should be designed in such a way that your workload primary access pattern do not use Scan. Overal, scan should be needed sparingly, eg: infrequent reports ...
+   - Scan through all items in a table then return one or more items through filters
+   - By default return all attributes for every item - use `ProjectExpression` to limit
+   - Scans are sequential, you can speed up a scan through parallel scans using `Segment` and `Total Segment`
+   - Scans can be slow, especially with very large tables and can easily consume your provisioned throughput
+   - Scans are one of the most expensive ways to access data in Dynamodb
+ - Query:
+  - Find items based on primary key values
+  - Table must have a composite key to be able to query
+  - By default queries are eventual consistent - use `ConsistentRead true` to change to Strongly consistent reads
+  - By default return all attributes for each item found - use `ProjectExpression` to limit
+  - By default is sorted ascending - use `ScanIndexForward` to false to reverse order to descending
+  - Dynamodb has 2 capacity modes: Provisioned and On-demand
+  - **Provisioned throughtput capacity** is the maximum capacity your application is allowed to read or write per second from a table or index
+    - Provisioned is suited for predictable or steady state workloads
+    - You should enable Auto Scaling with Provisioned capacity mode. In this mode you set the floor and ceiling capacity you wish the table to support. Dynamodb will automatically add or remove the capacity between these values on your behalf and throttle calls that go above the ceiling for too long
+    - If you go beyond the capacity you will get an exception: `ProvisionedThroughputExceededException` (throttling)
+    - Throttling is when requests are blocked due to read/write frequency higher than the set threshold. eg: exceeding set provisioned capacity, partitions splitting, table/index capacity mismatch
+  - **On-demand capacity** is pay per request so you pay for only for what you use
+    - On-demand is suited for new or unpredictable workloads
+    - The throughput is only limited by the default upper limits for a table (40k RCUs and 40k WCUs)
+    - Throttling can occur if you exceed double your previous peak capacity within 30 mins. eg: if you previously peaked to a maximum of 30.000 ops/second, you could not peak immediately to 90.000 ops/sec, but you could peak to 60.000 ops/sec
+    - Since there is no hard limit On-Demand could become very expensive based on emergining scenarios.
+ - Dynamodb Accelerator(DAX) is a fully managed in-memory write through cache for Dynamodb that run in a cluster.
+  - Reads are eventual consistent
+  - Incoming requests are evenly distributed across all of the nodes in the cluster
+  - DAX can reduce response time in **microsecond**
+  - **DAX is ideal for**
+    - Fastest response time possible
+    - Apps that read small amount of items frequently
+    - Apps that are **read intensive**
+  - **DAX is not ideal for**
+    - Apps that require strongly consistent reads
+    - Apps that do not require micro-second response time
+    - Apps that are **Write Intensive** or that do not perform much read activity
+    - If you don't need DAX consider **ElastiCache**
+- Dynamodb notable command: `aws dynamodb <command>`
+  - `get-item`: returns a set of attributes for the item with the given primary key. If no matching item, then it does not return any data and there will be no item element in the response
+  - `put-item`: creates a new item or replaces the old item with a new item.
+  - `update-item`: Edits an existing item's attributes, or adds a new item to the table if it does not exist
+  - `batch-get-item`: returns the attributes of one or more items from one or more tables. You identify the requested item by the primary key. A single operation can retrieve up to `16MB` of data, which can contain as many as `100 items`
+  - `batch-write-item`: puts or deletes multiple items in one or more tables. Can write up to `16MB` of data. Which can compise up to `25 put or delete requests`. Individual item can be as large as `400kb`
+  - `create-table`: adds a new table to your account
+  - `update-table`: modifies the provisioned throughput settings, global secondary indexes, or Dynamodb Streams settings for a given table
+  - `transact-get-items`: is a synchronous operation that atomically retrieves multiple items from one or more table(but not from indexes) in a single account and Region. Call can contain up to `25 objects`, aggregate size of the items in a transaction can not exceed 4MB.
+  - `transact-write-items`: is a synchronous write operation that can group up to `20 action requests`. These actions can target items in different tables but not in different aws accounts or Regions and no two actions can target the same item.
+  - `query`: finds items based on primary key values. You can query table or secondary index that has a composite primary key
+  - `scan`: returns one or more items and item's attributes by accessing every item in a table or a secondary index
