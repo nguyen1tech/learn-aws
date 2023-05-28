@@ -78,3 +78,15 @@
     - Apps that do not require micro-second response time
     - Apps that are **Write Intensive** or that do not perform much read activity
     - If you don't need DAX consider **ElastiCache**
+- Dynamodb notable command: `aws dynamodb <command>`
+  - `get-item`: returns a set of attributes for the item with the given primary key. If no matching item, then it does not return any data and there will be no item element in the response
+  - `put-item`: creates a new item or replaces the old item with a new item.
+  - `update-item`: Edits an existing item's attributes, or adds a new item to the table if it does not exist
+  - `batch-get-item`: returns the attributes of one or more items from one or more tables. You identify the requested item by the primary key. A single operation can retrieve up to `16MB` of data, which can contain as many as `100 items`
+  - `batch-write-item`: puts or deletes multiple items in one or more tables. Can write up to `16MB` of data. Which can compise up to `25 put or delete requests`. Individual item can be as large as `400kb`
+  - `create-table`: adds a new table to your account
+  - `update-table`: modifies the provisioned throughput settings, global secondary indexes, or Dynamodb Streams settings for a given table
+  - `transact-get-items`: is a synchronous operation that atomically retrieves multiple items from one or more table(but not from indexes) in a single account and Region. Call can contain up to `25 objects`, aggregate size of the items in a transaction can not exceed 4MB.
+  - `transact-write-items`: is a synchronous write operation that can group up to `20 action requests`. These actions can target items in different tables but not in different aws accounts or Regions and no two actions can target the same item.
+  - `query`: finds items based on primary key values. You can query table or secondary index that has a composite primary key
+  - `scan`: returns one or more items and item's attributes by accessing every item in a table or a secondary index
