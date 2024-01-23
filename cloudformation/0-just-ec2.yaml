@@ -1,0 +1,9 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "The simple cloudformation for provisioning an EC2 instance"
+Resources:
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      AvailabilityZone: "ap-southeast-1a"
+      ImageId: "ami-09eb2ed0e9c2f6126"
+      InstanceType: "t2.micro"
