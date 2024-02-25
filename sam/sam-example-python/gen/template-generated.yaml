@@ -7,13 +7,32 @@ Resources:
     Properties:
       Handler: app.lambda_handler
       Runtime: python3.9
-      CodeUri: s3://bac-sam-code/7b0b4df01b2fe05b7ba93564b9f6cffc
+      CodeUri: s3://bac-sam-code/77805a6c6a6eb4f7a652c491812735b4
       Description: A simple backend with RESTful API endpoint using Amazon API Gateway
       MemorySize: 128
       Timeout: 3
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: DynamoDBTable
+          REGION_NAME:
+            Ref: AWS::Region
       Events:
         HelloWorldSAMAPI:
           Type: Api
           Properties:
             Path: /hello-world
             Method: GET
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: DynamoDBTable
+  DynamoDBTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: greeting
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2

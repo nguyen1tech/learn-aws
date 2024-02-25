@@ -1,6 +1,11 @@
+import boto3
 import json
+import os
 
 print('Loading function')
+region_name = os.environ['REGION_NAME']
+dynamodb = boto3.client('dynamodb', region_name=region_name)
+table_name = os.environ['TABLE_NAME']
 
 
 def respond(err, res=None):
@@ -12,7 +17,7 @@ def respond(err, res=None):
         },
     }
 
-
 def lambda_handler(event, context):
     print("Received event: " + json.dumps(event, indent=2))
-    return respond(None, "Hello world")
+    scan_result = dynamodb.scan(TableName=table_name)
+    return respond(None, scan_result)

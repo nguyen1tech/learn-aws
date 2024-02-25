@@ -6,3 +6,6 @@ aws cloudformation package --s3-bucket bac-sam-code --template-file template.yam
 
 # deploy sam
 aws cloudformation deploy --template-file gen/template-generated.yaml --stack-name hello-word-sam --capabilities CAPABILITY_IAM
+
+# delete
+aws cloudformation delete-stack --stack-name hello-world-sam
